@@ -22,6 +22,7 @@ app.post("/sms", (req, res) =>{
 
     let sReply = 'test';
 
+    res.writeHead(200, {'Content-Type': 'text/xml'});
     res.end("<Response><Message>" +
     sReply + "</Message></Response>");
 
