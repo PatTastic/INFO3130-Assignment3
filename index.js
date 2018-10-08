@@ -14,13 +14,15 @@ app.get("/users/:uname", (req, res) => {
 
 let oGames = {};
 app.post("/sms", (req, res) =>{
-    let sFrom = req.body.From;
-    if(!oGames.hasOwnProperty(sFrom)){
-        oGames[sFrom] = new Game();
-    }    
-    let sReply = oGames[sFrom].makeAMove(req.body.Body);
+    let sFrom = req.body;//.From;
+    // if(!oGames.hasOwnProperty(sFrom)){
+    //     oGames[sFrom] = new Game();
+    // }
+    // let sReply = oGames[sFrom].makeAMove(req.body.Body);
 
-    res.end("<Response><Message>" + 
+    let sReply = 'test';
+
+    res.end("<Response><Message>" +
     sReply + "</Message></Response>");
 
 });
