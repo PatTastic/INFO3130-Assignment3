@@ -2,15 +2,16 @@ import util from 'util';
 
 const Utils = {
     formatResult: function(err, suc, message, emptyIdBad){
-        if(!doesExist(emptyIdBad)){
+        let result;
+        if(!Utils.doesExist(emptyIdBad)){
             emptyIdBad = false;
         }
 
-        if(doesExist(err)){
+        if(Utils.doesExist(err)){
             result = err;
             result.success = false;
         }
-        else if(doesExist(suc)){
+        else if(Utils.doesExist(suc)){
             result = suc;
 
             if(Array.isArray(result)){
@@ -37,17 +38,17 @@ const Utils = {
         console.log(message + ': ');
         if(Array.isArray(result)){
             for(let i=0; i<result.length; i++){
-                printObj(result);
+                Utils.printObj(result);
             }
         }
         else{
-            printObj(result);
+            Utils.printObj(result);
         }
 
         return result;
     },
     printObj: function(elem){
-        util.inspect(obj, {showHidden: false, depth: null});
+        util.inspect(elem, {showHidden: false, depth: null});
     },
     doesExist: function(elem){
         return !(typeof elem === 'undefined' || elem == null);
