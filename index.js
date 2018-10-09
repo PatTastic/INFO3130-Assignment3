@@ -1,31 +1,24 @@
 import express from 'express';
-import bodyParser  from "body-parser";
-import Game  from "./game";
+import cookieParser from 'cookie-parser';
+import bodyParser  from 'body-parser';
+import Game from './game';
 
-// Create a new express application instance
 const app = express();
 
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(express.static("www"));
+app.use(express.static('www'));
+app.use(cookieParser());
 
-app.get("/users/:uname", (req, res) => {
-    res.end("Hello " + req.params.uname);
+app.get('/users/:uname', (req, res) => {
+    res.end('Hello ' + req.params.uname);
 });
 
-let oGames = {};
-app.post("/sms", (req, res) =>{
-    let sFrom = req.body;//.From;
-    // if(!oGames.hasOwnProperty(sFrom)){
-    //     oGames[sFrom] = new Game();
-    // }
-    // let sReply = oGames[sFrom].makeAMove(req.body.Body);
+app.post('/sms', (req, res) =>{
+    let body = req.body.Body;
+    let from = req.body.From;
 
-    let sReply = 'test';
-
-    res.writeHead(200, {'Content-Type': 'text/xml'});
-    res.end("<Response><Message>" +
-    sReply + "</Message></Response>");
-
+    Game.play(body, from);
 });
 
 app.listen(process.env.PORT || 3000, () => console.log('listening on port ' + (process.env.PORT || 3000)));
+console.log('index.js loaded successfully');

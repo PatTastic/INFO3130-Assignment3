@@ -1,38 +1,77 @@
-const GameState = Object.freeze({
-    WELCOMING:   Symbol("welcoming"),
-    STICK:  Symbol("stick"),
-    PLAY: Symbol("play")
-});
+import Database from './db';
+import Utils from './utils';
+import API from './api';
 
-export default class Game{
-    constructor(){
-        this.stateCur = GameState.WELCOMING;
-    }
+const DB = Database.DB;
+const MySQL = Database.MySQL;
 
-    makeAMove(sInput)
-    {
-        let sReply = "Hi I'm spot (a dog). Oh look a stick. Do you play or keep on walking?";
-        switch(this.stateCur){
-            case GameState.WELCOMING:
-                this.stateCur = GameState.STICK;
-                break;
-            case GameState.STICK:
-                if(sInput.toLowerCase().match("play")){
-                    sReply = "Great my favourite game ... Here's the stick back. Do you throw it again?"
-                    this.stateCur = GameState.PLAY;
-                }else{
-                    sReply = "Walking is my favourite. Oh look a stick! Do you play or keep on walking?";
-                }
-                break;
-            case GameState.PLAY:
-                if(sInput.toLowerCase().match("yes")){
-                    sReply = "Here it is! I got it for you. Do you toss it again.... Please? ";
-                }else{
-                    sReply = "Walking is my favourite. Oh look a stick! Do you play or keep on walking?";
-                    this.stateCur = GameState.STICK;
-                }
-                break;
+const Game = {
+    play: function(body, from){
+        if(!Utils.doesExist(req.params['player'])){
+            let player = API.checkIfNumberExists(from);
+
+            if(player.success){
+                res.cookie('player', JSON.stringify(player));
+            }
+            else{
+                API.createPlayer('', from);
+                player = API.checkIfNumberExists(from);
+                res.cookie('player', JSON.stringify(player));
+            }
+
+            res.cookie('progress', 1);
+            res.cookie('isChoice', 'false');
         }
-        return(sReply);
+
+        let progress = req.cookies['progress'];
+        let toSend = {};
+
+        if(req.cookies['isChoice'] == 'true'){
+            let choices = API.getChoices(req.cookies['progress']);
+            let toStory = 0;
+
+            for(let i=0; i<choices.length; i++){
+                if(body.toLowerCase().indexOf('choices') > -1){
+                    toStory = choices[i].toStory;
+                    break;
+                }
+            }
+
+            if(toStory == 0){
+                toSend = {
+                    body: 'Response not recognized',
+                    sendDelay: 0
+                };
+            }
+            else{
+                toSend = API.getNextStory(toStory);
+            }
+        }
+        else{
+            toSend = API.getNextStory(progress);
+
+            if(toSend.isChoice){
+                toSend = API.getChoices(progress);
+                res.cookie('isChoice', 'true');
+            }
+            else{
+                res.cookie('progress', toSend.toNextStory);
+                res.cookie('isChoice', 'false');
+            }
+        }
+
+        let msg = '<Response><Message>' + toSend.body + '</Message></Response>';
+        setTimeout(Game.sendSMS, toSend.sendDelay, msg);
+
+        if(!toSend.isChoice){
+            Game.play();
+        }
+    },
+    sendSMS: function(msg){
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end(msg);
     }
-}
+};
+
+exports.Game = Game;
+console.log('game.js loaded successfully');
