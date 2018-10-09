@@ -1,7 +1,7 @@
 import util from 'util';
 
 const Utils = {
-    formatResult = function(err, suc, message, emptyIdBad){
+    formatResult: function(err, suc, message, emptyIdBad){
         if(!doesExist(emptyIdBad)){
             emptyIdBad = false;
         }
@@ -46,10 +46,10 @@ const Utils = {
 
         return result;
     },
-    printObj = function(elem){
+    printObj: function(elem){
         util.inspect(obj, {showHidden: false, depth: null});
     },
-    doesExist = function(elem){
+    doesExist: function(elem){
         return !(typeof elem === 'undefined' || elem == null);
     }
 };
