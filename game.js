@@ -1,33 +1,70 @@
-import Database from './db';
-import Utils from './utils';
-import API from './api';
+import timeoutPromise from './timeout-promise';
+import nodeLocalstorage from 'node-localstorage';
+import database from './db';
+import utils from './utils';
+import api from './api';
+import sms from './sms';
 
-const DB = Database.DB;
-const MySQL = Database.MySQL;
+const TimeoutPromise = timeoutPromise.TimeoutPromise;
+const DB = database.DB;
+const MySQL = database.MySQL;
+const API = api.API;
+const Utils = utils.Utils;
+const SMS = sms.SMS;
+const LocalStorage = nodeLocalstorage.LocalStorage;
+var localStorage;
+
+const cookieOptions = {
+    maxAge: (((60000 * 60) * 24) * 365),
+    overwrite: true,
+    path: '/'
+};
 
 const Game = {
-    play: function(body, from){
-        if(!Utils.doesExist(req.params['player'])){
-            let player = API.checkIfNumberExists(from);
-
-            if(player.success){
-                res.cookie('player', JSON.stringify(player));
-            }
-            else{
-                API.createPlayer('', from);
-                player = API.checkIfNumberExists(from);
-                res.cookie('player', JSON.stringify(player));
-            }
-
-            res.cookie('progress', 1);
-            res.cookie('isChoice', 'false');
+    play: function(req, res, body, from){
+        if (typeof localStorage === 'undefined' || localStorage === null) {
+            localStorage = new LocalStorage('./scratch');
         }
 
-        let progress = req.cookies['progress'];
-        let toSend = {};
+        if(!Utils.doesExist(localStorage.getItem('player'))){
+            API.checkIfNumberExists(from).then((player) => {
+                if(player.success){
+                    localStorage.setItem('player', JSON.stringify(player));
+                    Game.setupGame(req, res, body, from, player);
+                }
+                else{
+                    API.createPlayer('', from).then(() => {
+                        API.checkIfNumberExists(from).then((player) => {
+                            localStorage.setItem('player', JSON.stringify(player));
+                            Game.setupGame(req, res, body, from, player);
+                        })
+                    });
+                }
+            });
+        }
+        else{
+            Game.determineIfChoice(req, res, body, from);
+        }
+    },
+    setupGame: function(req, res, body, from, player){
+        localStorage.setItem('progress', player.storyProgress);
+        localStorage.setItem('isChoice', 'false');
+        API.updatePlayerProgress(from, player.storyProgress);
 
-        if(req.cookies['isChoice'] == 'true'){
-            let choices = API.getChoices(req.cookies['progress']);
+        Game.determineIfChoice(req, res, body, from);
+    },
+    determineIfChoice: function(req, res, body, from){
+        let progress = localStorage.getItem('progress');
+
+        if(localStorage.getItem('isChoice') == 'true'){
+            Game.getChoices(req, res, body, from);
+        }
+        else{
+            Game.getNextStory(req, res, body, from, progress);
+        }
+    },
+    getChoices: function(req, res, body, from){
+        API.getChoices(localStorage.getItem('progress')).then((choices) => {
             let toStory = 0;
 
             for(let i=0; i<choices.length; i++){
@@ -38,38 +75,50 @@ const Game = {
             }
 
             if(toStory == 0){
-                toSend = {
+                let toSend = {
                     body: 'Response not recognized',
-                    sendDelay: 0
+                    sendDelay: 0,
+                    isChoice: true
                 };
+
+                Game.determineIfSMS(req, res, body, from, toSend);
             }
             else{
-                toSend = API.getNextStory(toStory);
+                API.getNextStory(toStory).then((toSend) => {
+                    Game.determineIfSMS(req, res, body, from, toSend);
+                })
             }
-        }
-        else{
-            toSend = API.getNextStory(progress);
-
-            if(toSend.isChoice){
-                toSend = API.getChoices(progress);
-                res.cookie('isChoice', 'true');
-            }
-            else{
-                res.cookie('progress', toSend.toNextStory);
-                res.cookie('isChoice', 'false');
-            }
-        }
-
-        let msg = '<Response><Message>' + toSend.body + '</Message></Response>';
-        setTimeout(Game.sendSMS, toSend.sendDelay, msg);
-
-        if(!toSend.isChoice){
-            Game.play();
-        }
+        })
     },
-    sendSMS: function(msg){
-        res.writeHead(200, {'Content-Type': 'text/xml'});
-        res.end(msg);
+    getNextStory: function(req, res, body, from, toStory){
+        API.getNextStory(toStory).then((toSend) => {
+            if(toSend.isChoice){
+                localStorage.setItem('isChoice', 'true');
+                Game.getNextChoices(req, res, body, from, toStory);
+            }
+            else{
+                localStorage.setItem('progress', toSend.toNextStory);
+                localStorage.setItem('isChoice', 'false');
+                API.updatePlayerProgress(from, toSend.toNextStory);
+                Game.determineIfSMS(req, res, body, from, toSend);
+            }
+        })
+    },
+    getNextChoices: function(req, res, body, from, fromStory){
+        API.getChoices(fromStory).then((toSend) => {
+            Game.determineIfSMS(req, res, body, from, toSend);
+        })
+    },
+    determineIfSMS: function(req, res, body, from, toSend){
+        let end = (toSend.isChoice);
+        let smsTimeout = TimeoutPromise(toSend.sendDelay, SMS.sendSMS(res, toSend.body, end));
+
+        smsTimeout.then(() => {
+            console.log()
+            if(!toSend.isChoice){
+                Game.play(req, res, body, from);
+            }
+        })
     }
 };
 
