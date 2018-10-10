@@ -39,7 +39,7 @@ const API = {
     updatePlayerName: function(name, phoneNumber){
         let update = 'UPDATE player p SET p.name = ? WHERE p.phoneNumber = ?;';
         update = MySQL.format(update, [name, phoneNumber]);
-
+console.log('PN: ' + update);
         DB.query(update, function(err, suc){
             let result = Utils.formatResult(err, suc, 'updatePlayerName');
             return result;
@@ -57,7 +57,7 @@ const API = {
     updatePlayerProgress: function(phoneNumber, storyProgress){
         let update = 'UPDATE player p SET p.storyProgress = ? WHERE p.phoneNumber = ?;';
         update = MySQL.format(update, [storyProgress, phoneNumber]);
-
+console.log("PP: " + update);
         DB.query(update, function(err, suc){
             let result = Utils.formatResult(err, suc, 'updatePlayerProgress');
             return result;
