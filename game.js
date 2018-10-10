@@ -45,7 +45,7 @@ const Game = {
     setupGame: function(req, res, body, from, player){
         localStorage.setItem(from + '_progress', player.storyProgress);
         API.updatePlayerProgress(from, player.storyProgress);
-        console.log('2: ' + player.storyProgress);
+
         API.isChoice(player.storyProgress).then((isChoice) => {
             localStorage.setItem(from + '_isChoice', (isChoice == 1 ? 'true' : 'false'));
         }).catch((err) => {
@@ -119,11 +119,21 @@ const Game = {
         }
     },
     getChoices: function(req, res, body, from){
-        API.getChoices(localStorage.getItem(from + '_progress')).then((choices) => {
+        let progress = localStorage.getItem(from + '_progress');
+        API.getChoices(progress).then((choices) => {
             let toStory = 0;
-console.log(choices);
+
             for(let i=0; i<choices.length; i++){
-                if(body.toLowerCase().indexOf(choices[i].choice) > -1 || choices[i].choice == '%any%'){
+                if(progress == 10 && choices[i].choice == '%any%'){
+                    toStory = choices[i].toStory;
+
+                    let player = localStorage.getItem(from + '_player');
+                    player = JSON.parse(player);
+                    player.name = body;
+                    localStorage.setItem(from + '_player');
+                    API.updatePlayerName(body, from);
+                }
+                if(body.toLowerCase().indexOf(choices[i].choice) > -1){
                     toStory = choices[i].toStory;
                     break;
                 }
@@ -171,7 +181,6 @@ console.log(choices);
                     localStorage.setItem(from + '_progress', toSend.toNextStory);
                     localStorage.setItem(from + '_isChoice', 'false');
                     API.updatePlayerProgress(from, toSend.toNextStory);
-                    console.log('1: ' + toSend.toNextStory);
                     Game.determineIfSMS(req, res, body, from, toSend);
                 }
             }
