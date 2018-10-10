@@ -122,7 +122,7 @@ const Game = {
             let toStory = 0;
 
             for(let i=0; i<choices.length; i++){
-                if(body.toLowerCase().indexOf(choices[i]) > -1 || choices[i] == '%any%'){
+                if(body.toLowerCase().indexOf(choices[i].choice) > -1 || choices[i].choice == '%any%'){
                     toStory = choices[i].toStory;
                     break;
                 }
