@@ -22,7 +22,7 @@ const SMS = {
             localStorage.setItem(from + '_sms', wholeMsg);
 
             if(end){
-                wholeMsg = SMS.parseBody(wholeMsg);
+                wholeMsg = SMS.parseBody(from, wholeMsg);
                 localStorage.removeItem(from + '_sms');
 
                 res.writeHead(200, {'Content-Type': 'text/xml'});
@@ -32,7 +32,7 @@ const SMS = {
             resolve(true);
         })
     },
-    parseBody: function(msg){
+    parseBody: function(from, msg){
         let player = localStorage.getItem(from + '_player');
         player = JSON.parse(player);
 
