@@ -23,18 +23,19 @@ const Game = {
         let savedPlayer = localStorage.getItem('player');
         if(!Utils.doesExist(savedPlayer) || savedPlayer.length == 0){
             API.checkIfNumberExists(from).then((player) => {
-                if(player.success){
-                    localStorage.setItem('player', JSON.stringify(player));
-                    Game.setupGame(req, res, body, from, player);
-                }
-                else{
-                    API.createPlayer('', from).then(() => {
-                        API.checkIfNumberExists(from).then((player) => {
-                            localStorage.setItem('player', JSON.stringify(player));
-                            Game.setupGame(req, res, body, from, player);
-                        })
-                    });
-                }
+                localStorage.setItem('player', JSON.stringify(player));
+                Game.setupGame(req, res, body, from, player);
+            }).catch(() => {
+                API.createPlayer('', from).then(() => {
+                    API.checkIfNumberExists(from).then((player) => {
+                        localStorage.setItem('player', JSON.stringify(player));
+                        Game.setupGame(req, res, body, from, player);
+                    }).catch((err) => {
+                        console.log('ERROR: ' + err);
+                    })
+                }).catch((err) => {
+                    console.log('ERROR: ' + err);
+                });
             });
         }
         else{
@@ -46,6 +47,8 @@ const Game = {
         API.updatePlayerProgress(from, player.storyProgress);
         API.isChoice(player.storyProgress).then((isChoice) => {
             localStorage.setItem('isChoice', (isChoice == 1 ? 'true' : 'false'));
+        }).catch((err) => {
+            console.log('ERROR: ' + err);
         })
 
         Game.determineIfChoice(req, res, body, from);
@@ -61,6 +64,7 @@ const Game = {
         }
     },
     getChoices: function(req, res, body, from){
+        console.log('1');
         API.getChoices(localStorage.getItem('progress')).then((choices) => {
             let toStory = 0;
 
@@ -83,15 +87,20 @@ const Game = {
             else{
                 API.getNextStory(toStory).then((toSend) => {
                     Game.determineIfSMS(req, res, body, from, toSend);
+                }).catch((err) => {
+                    console.log('ERROR: ' + err);
                 })
             }
+        }).catch((err) => {
+            console.log('ERROR: ' + err);
         })
     },
     getNextStory: function(req, res, body, from, toStory){
         API.getNextStory(toStory).then((toSend) => {
             if(toSend.isChoice){
                 localStorage.setItem('isChoice', 'true');
-                Game.getNextChoices(req, res, body, from, toStory);
+                Game.determineIfSMS(req, res, body, from, toSend);
+                //Game.getNextChoices(req, res, body, from, toStory);
             }
             else{
                 localStorage.setItem('progress', toSend.toNextStory);
@@ -99,11 +108,16 @@ const Game = {
                 API.updatePlayerProgress(from, toSend.toNextStory);
                 Game.determineIfSMS(req, res, body, from, toSend);
             }
+        }).catch((err) => {
+            console.log('ERROR: ' + err);
         })
     },
     getNextChoices: function(req, res, body, from, fromStory){
+        console.log('2');
         API.getChoices(fromStory).then((toSend) => {
             Game.determineIfSMS(req, res, body, from, toSend);
+        }).catch((err) => {
+            console.log('ERROR: ' + err);
         })
     },
     determineIfSMS: function(req, res, body, from, toSend){

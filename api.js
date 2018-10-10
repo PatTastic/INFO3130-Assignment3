@@ -27,9 +27,9 @@ const API = {
         return new Promise((resolve, reject) => {
             phoneNumber = phoneNumber.replace(/\D/gi, '');
 
-            let insert = 'INSERT INO player(id, name, phoneNumber, storyProgress) VALUES (DEFAULT, ?, ?, 1);';
+            let insert = 'INSERT INTO player(id, name, phoneNumber, storyProgress) VALUES (DEFAULT, ?, ?, 1);';
             insert = MySQL.format(insert, [name, phoneNumber]);
-
+            
             DB.query(insert, function(err, suc){
                 let result = Utils.formatResult(err, suc, 'createPlayer');
                 result.success ? resolve(result) : reject(result);
