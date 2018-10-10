@@ -26,7 +26,8 @@ const Game = {
             localStorage = new LocalStorage('./scratch');
         }
 
-        if(!Utils.doesExist(localStorage.getItem('player'))){
+        let savedPlayer = localStorage.getItem('player');
+        if(!Utils.doesExist(savedPlayer) || savedPlayer.length == 0){
             API.checkIfNumberExists(from).then((player) => {
                 if(player.success){
                     localStorage.setItem('player', JSON.stringify(player));
