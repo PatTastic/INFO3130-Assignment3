@@ -121,7 +121,7 @@ const Game = {
     getChoices: function(req, res, body, from){
         API.getChoices(localStorage.getItem(from + '_progress')).then((choices) => {
             let toStory = 0;
-
+console.log(choices);
             for(let i=0; i<choices.length; i++){
                 if(body.toLowerCase().indexOf(choices[i].choice) > -1 || choices[i].choice == '%any%'){
                     toStory = choices[i].toStory;
@@ -130,8 +130,15 @@ const Game = {
             }
 
             if(toStory == 0){
+                let msg = 'Response not recognized, looking for ';
+                let choicesText = [];
+                for(let i=0; i<choices.length; i++){
+                    choicesText.push(choices[i].choice);
+                }
+                msg += '"' + choicesText.join('", "') + '".';
+
                 let toSend = {
-                    body: 'Response not recognized',
+                    body: msg,
                     sendDelay: 0,
                     isChoice: true
                 };

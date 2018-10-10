@@ -9,8 +9,6 @@ const API = {
     // PLAYER
     checkIfNumberExists: function(phoneNumber){
         return new Promise((resolve, reject) => {
-            phoneNumber = phoneNumber.replace(/\D/gi, '');
-
             let query = 'SELECT p.name, p.phoneNumber, p.storyProgress FROM player p WHERE p.phoneNumber = ?;';
             query = MySQL.format(query, [phoneNumber]);
 
@@ -25,8 +23,6 @@ const API = {
     },
     createPlayer: function(name, phoneNumber){
         return new Promise((resolve, reject) => {
-            phoneNumber = phoneNumber.replace(/\D/gi, '');
-
             let insert = 'INSERT INTO player(id, name, phoneNumber, storyProgress) VALUES (DEFAULT, ?, ?, 1);';
             insert = MySQL.format(insert, [name, phoneNumber]);
 
@@ -39,7 +35,7 @@ const API = {
     updatePlayerName: function(name, phoneNumber){
         let update = 'UPDATE player SET name = ? WHERE phoneNumber = ?;';
         update = MySQL.format(update, [name, phoneNumber]);
-console.log('PN: ' + update);
+
         DB.query(update, function(err, suc){
             let result = Utils.formatResult(err, suc, 'updatePlayerName');
             return result;
@@ -57,7 +53,7 @@ console.log('PN: ' + update);
     updatePlayerProgress: function(phoneNumber, storyProgress){
         let update = 'UPDATE player SET storyProgress = ? WHERE phoneNumber = ?;';
         update = MySQL.format(update, [storyProgress, phoneNumber]);
-console.log("PP: " + update);
+
         DB.query(update, function(err, suc){
             let result = Utils.formatResult(err, suc, 'updatePlayerProgress');
             return result;
