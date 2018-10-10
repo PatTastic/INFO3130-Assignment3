@@ -29,7 +29,7 @@ const API = {
 
             let insert = 'INSERT INTO player(id, name, phoneNumber, storyProgress) VALUES (DEFAULT, ?, ?, 1);';
             insert = MySQL.format(insert, [name, phoneNumber]);
-            
+
             DB.query(insert, function(err, suc){
                 let result = Utils.formatResult(err, suc, 'createPlayer');
                 result.success ? resolve(result) : reject(result);
@@ -108,9 +108,7 @@ const API = {
 
             DB.query(query, function(err, suc){
                 let result = Utils.formatResult(err, suc, 'getChoices');
-
-                result = result[0];
-                result.success ? resolve(result) : reject(result);
+                result[0].success ? resolve(result) : reject(result);
             });
         })
     }

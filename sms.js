@@ -7,7 +7,7 @@ const LocalStorage = nodeLocalstorage.LocalStorage;
 var localStorage;
 
 const SMS = {
-    sendSMS: function(res, from, msg, end){
+    sendStory: function(res, from, msg, end){
         return new Promise((resolve, reject) => {
             if (typeof localStorage === 'undefined' || localStorage === null) {
                 localStorage = new LocalStorage('./scratch');
@@ -25,8 +25,7 @@ const SMS = {
                 wholeMsg = SMS.parseBody(from, wholeMsg);
                 localStorage.removeItem(from + '_sms');
 
-                res.writeHead(200, {'Content-Type': 'text/xml'});
-                res.end('<Response>' + wholeMsg + '</Response>');
+                SMS.sendSMS(res, wholeMsg);
             }
 
             resolve(true);
@@ -40,6 +39,10 @@ const SMS = {
         msg = msg.replace(/\\n/gi, '%0a');
 
         return msg;
+    },
+    sendSMS: function(res, msg){
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end('<Response>' + msg + '</Response>');
     }
 };
 

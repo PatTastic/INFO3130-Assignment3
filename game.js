@@ -39,7 +39,7 @@ const Game = {
             });
         }
         else{
-            Game.determineIfChoice(req, res, body, from);
+            Game.checkAlwaysPresentStates(req, res, body, from);
         }
     },
     setupGame: function(req, res, body, from, player){
@@ -50,6 +50,60 @@ const Game = {
         }).catch((err) => {
             console.log('ERROR: ' + err);
         })
+
+        Game.checkAlwaysPresentStates(req, res, body, from);
+    },
+    checkAlwaysPresentStates: function(req, res, body, from){
+        let msg = '';
+
+        if(body.toLowerCase() != 'reset'){
+            localStorage.removeItem(from + '_reset');
+        }
+        if(body.toLowerCase().match(/^(change name ).+/gi)){
+            let newName = body.replace(/(change name)/, '').trim();
+            msg = 'Name changed to ' + newName;
+            API.updatePlayerName(newName, from);
+            let player = localStorage.getItem(from + '_player');
+            player = JSON.parse(player);
+            player.name = newName;
+            localStorage.setItem(from + '_player', JSON.stringify(player));
+        }
+
+        switch(body.toLowerCase()){
+            case 'help':
+                msg = '== Help =='
+                    + '\nAction options appear in [square brackets].'
+                    + '\nMessage back one of the options to progress the game.'
+                    + '</Message><Message>'
+                    + '== Help =='
+                    + '\nOther Commands:'
+                    + '\n- reset\n- change name [new name]\n- credits';
+                break;
+            case 'reset':
+                let reset = localStorage.getItem(from + '_reset');
+                if(Utils.doesStorageExist(reset)){
+                    msg = 'Your game has been reset.';
+                    localStorage.removeItem(from + '_reset');
+                    localStorage.removeItem(from + '_progress');
+                    localStorage.removeItem(from + '_isChoice');
+                    API.updatePlayerProgress(from, 1);
+                }
+                else{
+                    localStorage.setItem(from + '_reset', 1);
+                    msg = 'This will reset your game progress back to the very start.'
+                        + '\nMessage "reset" again to confirm reset.'
+                        + '\nContinue with the game to ignore.';
+                }
+                break;
+            case 'credits':
+                msg = 'Made by Pat Wilken for INFO3130 Assignment 3'
+                    + '\n\nhttps://patwilken.me';
+                break;
+        }
+
+        if(msg != ''){
+            SMS.sendSMS(from, msg);
+        }
 
         Game.determineIfChoice(req, res, body, from);
     },
@@ -68,7 +122,7 @@ const Game = {
             let toStory = 0;
 
             for(let i=0; i<choices.length; i++){
-                if(body.toLowerCase().indexOf(choices[i]) > -1){
+                if(body.toLowerCase().indexOf(choices[i]) > -1 || choices[i] == '%any%'){
                     toStory = choices[i].toStory;
                     break;
                 }
@@ -120,7 +174,7 @@ const Game = {
     },
     determineIfSMS: function(req, res, body, from, toSend){
         let end = (toSend.isChoice);
-        let smsTimeout = TimeoutPromise(toSend.sendDelay, SMS.sendSMS(res, from, toSend.body, end));
+        let smsTimeout = TimeoutPromise(toSend.sendDelay, SMS.sendStory(res, from, toSend.body, end));
 
         smsTimeout.then(() => {
             if(!toSend.isChoice){

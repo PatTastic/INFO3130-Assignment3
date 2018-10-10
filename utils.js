@@ -52,6 +52,9 @@ const Utils = {
     },
     doesExist: function(elem){
         return !(typeof elem === 'undefined' || elem == null);
+    },
+    doesStorageExist: function(elem){
+        return (Utils.doesExist(elem) && elem.toString().length > 0);
     }
 };
 
