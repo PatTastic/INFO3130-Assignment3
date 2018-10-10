@@ -14,7 +14,7 @@ const SMS = {
             }
 
             let wholeMsg = localStorage.getItem(from + '_sms');
-            if(!Utils.doesExist(wholeMsg) || wholeMsg.length == 0){
+            if(!Utils.doesStorageExist(wholeMsg)){
                 wholeMsg = '';
             }
 

@@ -21,7 +21,7 @@ const Game = {
         }
 
         let savedPlayer = localStorage.getItem(from + '_player');
-        if(!Utils.doesExist(savedPlayer) || savedPlayer.length == 0){
+        if(!Utils.doesStorageExist(savedPlayer)){
             API.checkIfNumberExists(from).then((player) => {
                 localStorage.setItem(from + '_player', JSON.stringify(player));
                 Game.setupGame(req, res, body, from, player);
@@ -45,6 +45,7 @@ const Game = {
     setupGame: function(req, res, body, from, player){
         localStorage.setItem(from + '_progress', player.storyProgress);
         API.updatePlayerProgress(from, player.storyProgress);
+        console.log('2: ' + player.storyProgress);
         API.isChoice(player.storyProgress).then((isChoice) => {
             localStorage.setItem(from + '_isChoice', (isChoice == 1 ? 'true' : 'false'));
         }).catch((err) => {
@@ -146,16 +147,26 @@ const Game = {
     },
     getNextStory: function(req, res, body, from, toStory){
         API.getNextStory(toStory).then((toSend) => {
-            if(toSend.isChoice){
-                localStorage.setItem(from + '_isChoice', 'true');
-                Game.determineIfSMS(req, res, body, from, toSend);
-                //Game.getNextChoices(req, res, body, from, toStory);
+            if(toSend.title == 'game over'){
+                SMS.sendStory(res, from, toSend.body, end);
+                localStorage.removeItem(from + '_reset');
+                localStorage.removeItem(from + '_progress');
+                localStorage.removeItem(from + '_isChoice');
+                API.updatePlayerProgress(from, 1);
             }
             else{
-                localStorage.setItem(from + '_progress', toSend.toNextStory);
-                localStorage.setItem(from + '_isChoice', 'false');
-                API.updatePlayerProgress(from, toSend.toNextStory);
-                Game.determineIfSMS(req, res, body, from, toSend);
+                if(toSend.isChoice){
+                    localStorage.setItem(from + '_isChoice', 'true');
+                    Game.determineIfSMS(req, res, body, from, toSend);
+                    //Game.getNextChoices(req, res, body, from, toStory);
+                }
+                else{
+                    localStorage.setItem(from + '_progress', toSend.toNextStory);
+                    localStorage.setItem(from + '_isChoice', 'false');
+                    API.updatePlayerProgress(from, toSend.toNextStory);
+                    console.log('1: ' + toSend.toNextStory);
+                    Game.determineIfSMS(req, res, body, from, toSend);
+                }
             }
         }).catch((err) => {
             console.log('ERROR: ' + err);

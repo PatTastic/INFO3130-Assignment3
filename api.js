@@ -55,7 +55,7 @@ const API = {
         });
     },
     updatePlayerProgress: function(phoneNumber, storyProgress){
-        let update = 'UPDATE player p SET storyProgress = ? WHERE p.phoneNumber = ?;';
+        let update = 'UPDATE player p SET p.storyProgress = ? WHERE p.phoneNumber = ?;';
         update = MySQL.format(update, [storyProgress, phoneNumber]);
 
         DB.query(update, function(err, suc){
