@@ -138,11 +138,7 @@ const Game = {
                 Game.determineIfSMS(req, res, body, from, toSend);
             }
             else{
-                API.getNextStory(toStory).then((toSend) => {
-                    Game.determineIfSMS(req, res, body, from, toSend);
-                }).catch((err) => {
-                    console.log('ERROR: ' + err);
-                })
+                Game.getNextStory(req, res, body, from, toStory);
             }
         }).catch((err) => {
             console.log('ERROR: ' + err);
