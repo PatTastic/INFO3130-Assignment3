@@ -14,12 +14,6 @@ const SMS = sms.SMS;
 const LocalStorage = nodeLocalstorage.LocalStorage;
 var localStorage;
 
-const cookieOptions = {
-    maxAge: (((60000 * 60) * 24) * 365),
-    overwrite: true,
-    path: '/'
-};
-
 const Game = {
     play: function(req, res, body, from){
         if (typeof localStorage === 'undefined' || localStorage === null) {
@@ -49,8 +43,10 @@ const Game = {
     },
     setupGame: function(req, res, body, from, player){
         localStorage.setItem('progress', player.storyProgress);
-        localStorage.setItem('isChoice', 'false');
         API.updatePlayerProgress(from, player.storyProgress);
+        API.isChoice(player.storyProgress).then((isChoice) => {
+            localStorage.setItem('isChoice', (isChoice == 1 ? 'true' : 'false'));
+        })
 
         Game.determineIfChoice(req, res, body, from);
     },
@@ -69,7 +65,7 @@ const Game = {
             let toStory = 0;
 
             for(let i=0; i<choices.length; i++){
-                if(body.toLowerCase().indexOf('choices') > -1){
+                if(body.toLowerCase().indexOf(choices[i]) > -1){
                     toStory = choices[i].toStory;
                     break;
                 }

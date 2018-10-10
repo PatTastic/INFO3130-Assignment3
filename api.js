@@ -86,6 +86,19 @@ const API = {
             });
         })
     },
+    isChoice: function(storyId){
+        return new Promise((resolve, reject) => {
+            let query = 'SELECT s.isChoice FROM story s WHERE s.id = ?;';
+            query = MySQL.format(query, [storyId]);
+
+            DB.query(query, function(err, suc){
+                let result = MySQL.formatResult(err, suc, 'isChoice');
+
+                result = result[0];
+                result.success ? resolve(result) : reject(result);
+            })
+        })
+    },
     // CHOICE
     getChoices: function(storyId){
         return new Promise((resolve, reject) => {
