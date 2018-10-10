@@ -18,6 +18,7 @@ const API = {
                 let result = Utils.formatResult(err, suc, 'checkIfNumberExists');
 
                 result = result[0];
+                result.success = (Utils.doesExist(result.name));
                 result.success ? resolve(result) : reject(result);
             })
         })
@@ -31,7 +32,6 @@ const API = {
 
             DB.query(insert, function(err, suc){
                 let result = Utils.formatResult(err, suc, 'createPlayer');
-
                 result.success ? resolve(result) : reject(result);
             });
         })
@@ -92,7 +92,7 @@ const API = {
             query = MySQL.format(query, [storyId]);
 
             DB.query(query, function(err, suc){
-                let result = MySQL.formatResult(err, suc, 'isChoice');
+                let result = Utils.formatResult(err, suc, 'isChoice');
 
                 result = result[0];
                 result.success ? resolve(result) : reject(result);
