@@ -46,11 +46,13 @@ function getNextStory(msg){
     }, function(data, status){
         console.log('Story: ' + status);
 
+        data = data.all[0].innerHTML;
         data = data.split('</Message><Message>');
         for(var i=0; i<data.length; i++){
             data[i] = data[i].replace(/\<(\/)?Message\>/gi, '');
             data[i] = data[i].replace(/\<(\/)?Response\>/gi, '');
 
+            History.add(data[i], 'server');
             print(data[i], 'server');
         }
     });
