@@ -40,7 +40,7 @@ function sendMessage(){
 }
 
 function getNextStory(msg){
-    $.get('https://info3130-a3.herokuapp.com/web/', {
+    $.post('https://info3130-a3.herokuapp.com/web/', {
         body: msg,
         from: getPhoneNumber()
     }, function(data, status){
