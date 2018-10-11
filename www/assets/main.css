@@ -32,6 +32,37 @@ main{
 }
 #messages{
     margin: 0;
+    padding: 10px;
+    border-radius: 20px;
+    max-height: 100%;
+    min-height: 50px;
+    overflow-y: auto;
+}
+#messages li{
+    width: 100%;
+    list-style: none;
+    margin-bottom: 5px;
+}
+#messages li p{
+    margin: 0;
+    max-width: 60%;
+    border-radius: 5px;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+.from-server p{
+    color: white;
+    background-color: #0074D9;
+    border-bottom-left-radius: 0 !important;
+}
+.from-user{
+    text-align: right;
+}
+.from-user p{
+    color: black;
+    background-color: #2ECC40;
+    border-bottom-right-radius: 0 !important;
 }
 
 #controls{
@@ -57,4 +88,24 @@ main{
     border: none;
     border-bottom-left-radius: 20px;
     padding: 10px 20px;
+}
+
+#clear{
+    position: absolute;
+    top: 20px;
+    left: 0px;
+    border: 1px solid black;
+    padding: 2px 5px;
+    margin-left: -1px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    cursor: pointer;
+    width: 25px;
+    height: 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: width 0.3s;
+}
+#clear:hover{
+    width: 68px;
 }

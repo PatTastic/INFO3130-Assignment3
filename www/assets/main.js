@@ -11,18 +11,35 @@ $(function(){
         phone = makeID();
         localStorage.setItem('fake-number', phone);
     }
+
+    $('#msg').focus();
 });
 
-$('#send').click(function(e)){
+$('#clear').click(function(){
+    localStorage.removeItem('history');
+    $('#messages').html('');
+});
+
+$('#send').click(function(e){
+    sendMessage();
+});
+$('#msg').keypress(function(e){
+    if(typeof e !== 'undefined' && e.which == 13){
+        sendMessage();
+    }
+})
+function sendMessage(){
     var msg = $('#msg').val().trim();
 
     if(msg != ''){
         History.add(msg, 'user');
-        sendMessage(msg);
+        print(msg, 'user');
+        $('#msg').val('').focus();
+        getNextStory(msg);
     }
 }
 
-function sendMessage(){
+function getNextStory(msg){
     $.get('https://info3130-a3.herokuapp.com/web/', {
         body: msg,
         from: getPhoneNumber()
@@ -34,7 +51,10 @@ function sendMessage(){
 
 function print(msg, from){
     var className = (from == 'server' ? 'from-server' : 'from-user');
-    $('#messages').append('<li class="' + className + '">' + msg + '</li>');
+    var messages = $('#messages');
+
+    messages.append('<li class="' + className + '"><p>' + msg + '</p></li>');
+    messages.animate({scrollTop: messages.prop('scrollHeight')}, 0);
 }
 
 /* Helper Functions */
