@@ -41,7 +41,10 @@ const SMS = {
         return msg;
     },
     sendSMS: function(res, msg){
-        res.writeHead(200, {'Content-Type': 'text/xml'});
+        if(!res.headersSent){
+            res.writeHead(200, {'Content-Type': 'text/xml'});
+        }
+        
         res.end('<Response>' + msg + '</Response>');
     }
 };

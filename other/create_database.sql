@@ -64,7 +64,7 @@ INSERT INTO choice(id, choice) VALUES
 
 INSERT INTO story(id, title, body, sendDelay, isChoice, toNextStory) VALUES
 (DEFAULT, 'begin 1', 'Oh thank god, someone finally found me.', 1000, 0, 2),
-(DEFAULT, 'begin 2', 'Our ship crashed on some moon, it’s been weeks  since I’ve had human contact.', 1500, 0, 3),
+(DEFAULT, 'begin 2', 'Our ship crashed on some moon, it’s been weeks since I’ve had human contact.', 1500, 0, 3),
 (DEFAULT, 'begin 3', 'I have come into contact with alien life. Yes, that makes me the first human to do so. I would send you a picture of them, but my plan doesn’t include mms.', 2000, 0, 4),
 (DEFAULT, 'begin choice', '[how did you survive?]\n\n[who are you?]', 0, 1, NULL),
 (DEFAULT, 'survive 1', 'I ejected before the ship crashed, and no that\'s not a cowardly move.', 1000, 0, 6),
@@ -101,7 +101,7 @@ INSERT INTO story(id, title, body, sendDelay, isChoice, toNextStory) VALUES
 (DEFAULT, 'through enemies 2', 'I got through, I punched one of them to assert dominance, didn’t work well. I tried to give a yell, but my voice went shrill. Either way, they left after that.', 5000, 0, 37),
 (DEFAULT, 'through enemies 3', 'If this ever comes up sometime, I gave a bloodcurdling war cry and they ran away in fear, ok? Ok.', 2000, 0, 38),
 (DEFAULT, 'north regroup 1', 'Anyway, I see smoke in the distance, that must be my ship! ', 1500, 0, 39),
-(DEFAULT, 'north regroup 2', 'Unfortunately I can’t go straight north, there’s a massively tall cliffside  that I can’t climb. East or West, up to you.', 2000, 0, 40),
+(DEFAULT, 'north regroup 2', 'Unfortunately I can’t go straight north, there’s a massively tall cliffside that I can’t climb. East or West, up to you.', 2000, 0, 40),
 (DEFAULT, 'north regroup 3', '[west]\n\n[east]', 0, 1, NULL),
 (DEFAULT, 'west 1', 'I went west, I see a pod from our ship! I’m going to it.', 3000, 0, 42),
 (DEFAULT, 'west 2', 'There’s a note! It’s written in English! (but in an alien-themed font!)', 2000, 0, 43),

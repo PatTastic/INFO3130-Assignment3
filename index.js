@@ -7,16 +7,13 @@ const app = express();
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static('www'));
+app.use(express.json());
 
-app.get('/test', (req, res) => {
-    let body = 'test';
-    let from = '5198076720';
+app.post('/web', (req, res) => {
+    let body = req.body.body;
+    let from = req.body.from;
 
     Game.play(req, res, body, from);
-})
-
-app.get('/users/:uname', (req, res) => {
-    res.end('Hello ' + req.params.uname);
 });
 
 app.post('/sms', (req, res) =>{

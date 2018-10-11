@@ -85,8 +85,8 @@ const Game = {
                 if(Utils.doesStorageExist(reset)){
                     msg = 'Your game has been reset.';
                     localStorage.removeItem(from + '_reset');
-                    localStorage.removeItem(from + '_progress');
                     localStorage.removeItem(from + '_isChoice');
+                    localStorage.setItem(from + '_progress', 1);
                     API.updatePlayerProgress(from, 1);
                 }
                 else{
@@ -103,7 +103,8 @@ const Game = {
         }
 
         if(msg != ''){
-            SMS.sendSMS(from, msg);
+            msg = '<Message>' + msg + '</Message>';
+            SMS.sendSMS(res, msg);
         }
 
         Game.determineIfChoice(req, res, body, from);
@@ -130,7 +131,7 @@ const Game = {
                     let player = localStorage.getItem(from + '_player');
                     player = JSON.parse(player);
                     player.name = body;
-                    localStorage.setItem(from + '_player');
+                    localStorage.setItem(from + '_player', JSON.stringify(player));
                     API.updatePlayerName(body, from);
                 }
                 if(body.toLowerCase().indexOf(choices[i].choice) > -1){
