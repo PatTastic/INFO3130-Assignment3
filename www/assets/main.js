@@ -51,6 +51,7 @@ function getNextStory(msg){
         for(var i=0; i<data.length; i++){
             data[i] = data[i].replace(/\<(\/)?Message\>/gi, '');
             data[i] = data[i].replace(/\<(\/)?Response\>/gi, '');
+            data[i] = data[i].replace(/(\\n|\%0a)/g, '<br>');
 
             History.add(data[i], 'server');
             print(data[i], 'server');

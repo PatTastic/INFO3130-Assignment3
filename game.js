@@ -166,7 +166,7 @@ const Game = {
     getNextStory: function(req, res, body, from, toStory){
         API.getNextStory(toStory).then((toSend) => {
             if(toSend.title == 'game over'){
-                SMS.sendStory(res, from, toSend.body, end);
+                SMS.sendStory(res, from, toSend.body, true);
                 localStorage.removeItem(from + '_reset');
                 localStorage.removeItem(from + '_progress');
                 localStorage.removeItem(from + '_isChoice');
