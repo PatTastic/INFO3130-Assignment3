@@ -110,7 +110,7 @@ INSERT INTO story(id, title, body, sendDelay, isChoice, toNextStory) VALUES
 (DEFAULT, 'west 5', 'Anyway, I’m going to go eastward now.', 500, 0, 46),
 (DEFAULT, 'east 1', 'I went east, after going around the side of the cliffside a bit, there appears to be a worn path that heads more east. I’ll follow it.', 3000, 0, 47),
 (DEFAULT, 'east 2', 'Oh god, I see a mangled spacesuit… it must have been a crew member. I’m going over to them.', 2000, 0, 48),
-(DEFAULT, 'east 3', 'There’s no body inside the suit, but there’s a blaster sitting nearby. I’ll hang onto that.', 2000, 0, -1), -- regroup
+(DEFAULT, 'east 3', 'There’s no body inside the suit, but there’s a blaster sitting nearby. I’ll hang onto that.', 2000, 0, 62),
 (DEFAULT, 'south 1', 'Ok, I’m up on the dune. Looks like I was wrong! My ship is in more of a north-east direction.', 5000, 0, 50),
 (DEFAULT, 'south 2', 'I can go eastward or head back to my camp, what do you think?', 1000, 0, 51),
 (DEFAULT, 'south 3', '[back to camp]\n\n[east]', 0, 1, NULL),
@@ -133,7 +133,7 @@ INSERT INTO story(id, title, body, sendDelay, isChoice, toNextStory) VALUES
 (DEFAULT, 'approach 4', 'Should I blast em? Or try to make a break for the ship?', 1500, 0, 69),
 (DEFAULT, 'approach 5', '[fight]\n\n[run]', 0, 1, NULL),
 (DEFAULT, 'run 1', 'Ok, here I go!', 500, 0, 71),
-(DEFAULT, 'run 2', 'I got past them, but they’re flying after me, I’ve got to get to the ship fast.', 5000, 0, 74), -- ad
+(DEFAULT, 'run 2', 'I got past them, but they’re flying after me, I’ve got to get to the ship fast.', 5000, 0, 74),
 (DEFAULT, 'fight 1', 'Alright, let get blasting!', 1000, 0, 73),
 (DEFAULT, 'fight 2', 'It’s over, I blasted most of them, the rest fly away in defeat.', 10000, 0, 74),
 (DEFAULT, 'final 1', 'I see the ship! I’ll make my way to it.', 1500, 0, 75),
@@ -165,8 +165,5 @@ INSERT INTO storyChoice(storyId, choiceId, toStory) VALUES
 (64, 4, 65),
 (69, 18, 70),
 (69, 17, 72);
-
-INSERT INTO player(id, name, phoneNumber, storyProgress) VALUES
-(DEFAULT, 'Pat', 5198076720, 1);
 
 SELECT 'Successfully created pw_info_a3';
