@@ -44,8 +44,15 @@ function getNextStory(msg){
         body: msg,
         from: getPhoneNumber()
     }, function(data, status){
-        console.log(data);
-        console.log(status);
+        console.log('Story: ' + status);
+
+        data = data.split('</Message><Message>');
+        for(var i=0; i<data.length; i++){
+            data[i] = data[i].replace(/\<(\/)?Message\>/gi, '');
+            data[i] = data[i].replace(/\<(\/)?Response\>/gi, '');
+
+            print(data[i], 'server');
+        }
     });
 }
 
