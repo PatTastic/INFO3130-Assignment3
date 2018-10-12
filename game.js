@@ -106,8 +106,9 @@ const Game = {
             msg = '<Message>' + msg + '</Message>';
             SMS.sendSMS(res, msg);
         }
-
-        Game.determineIfChoice(req, res, body, from);
+        else{
+            Game.determineIfChoice(req, res, body, from);
+        }
     },
     determineIfChoice: function(req, res, body, from){
         let progress = localStorage.getItem(from + '_progress');
@@ -157,6 +158,7 @@ const Game = {
                 Game.determineIfSMS(req, res, body, from, toSend);
             }
             else{
+                localStorage.setItem(from + '_progress', toStory);
                 Game.getNextStory(req, res, body, from, toStory);
             }
         }).catch((err) => {

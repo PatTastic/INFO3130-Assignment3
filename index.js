@@ -12,7 +12,7 @@ app.use(express.json());
 app.post('/web', (req, res) => {
     let body = req.body.body;
     let from = req.body.from;
-
+    
     Game.play(req, res, body, from);
 });
 

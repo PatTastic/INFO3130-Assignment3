@@ -73,7 +73,7 @@ const API = {
         return new Promise((resolve, reject) => {
             let query = 'SELECT s.title, s.body, s.sendDelay, s.isChoice, s.toNextStory FROM story s WHERE id = ?;';
             query = MySQL.format(query, [storyId]);
-
+            
             DB.query(query, function(err, suc){
                 let result = Utils.formatResult(err, suc, 'getNextStory');
 

@@ -13,7 +13,7 @@ html{
 }
 
 main{
-    max-height: 800px;
+    max-height: 900px;
     max-width: 500px;
     height: 100%;
     width: 100%;
@@ -23,12 +23,17 @@ main{
     transform: translate(-50%, -50%);
     border: 2px solid black;
     border-radius: 20px;
+    box-shadow: 5px 5px 10px 2px #6d6d6d;
+}
+
+#message-container,
+#controls{
+    border-right: 20px solid #121212;
+    border-left: 20px solid #121212;
 }
 
 #message-container{
-    height: calc(100% - 40px);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    height: calc(100% - 200px);
 }
 #messages{
     margin: 0;
@@ -49,12 +54,39 @@ main{
     border-radius: 5px;
     padding: 5px 10px;
     display: inline-block;
+    text-align: left;
+    word-break: break-all;
+    position: relative;
+}
+#messages li p::before,
+#messages li p::after{
+    content: '';
+    position: absolute;
+}
+#messages li p::before{
+    width: 10px;
+    height: 10px;
+    bottom: -5px;
+    transform: rotate(45deg);
+}
+#messages li p::after{
+    width: 15px;
+    height: 7px;
+    bottom: -7px;
+    background-color: white;
 }
 
 .from-server p{
     color: white;
     background-color: #0074D9;
     border-bottom-left-radius: 0 !important;
+}
+.from-server p::before{
+    left: -5px;
+    background-color: #0074D9;
+}
+.from-server p::after{
+    left: -7px;
 }
 .from-user{
     text-align: right;
@@ -64,13 +96,24 @@ main{
     background-color: #2ECC40;
     border-bottom-right-radius: 0 !important;
 }
+.from-user p::before{
+    right: -5px;
+    background-color: #2ecc40;
+}
+.from-user p::after{
+    right: -7px;
+}
+
+#input-splitter{
+    width: calc(100% - 40px);
+    margin: -2px auto 0px auto;
+    border-top: 2px solid grey;
+    position: relative;
+}
 
 #controls{
     height: 40px;
     width: 100%;
-    border-top: 2px solid grey;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
 }
 
 #send{
@@ -80,10 +123,29 @@ main{
     padding: 5px 10px;
     cursor: pointer;
     border-bottom-right-radius: 20px;
+    position: relative;
+    z-index: 1;
+}
+#send::after{
+    background: #e1e1e1;
+    content: '';
+    position: absolute;
+    z-index: -1;
+    height: 100%;
+    left: 0;
+    top: 0;
+    width: 0;
+    transition: width 0.3s;
+}
+#send:hover::after{
+    width: 100%;
+}
+#send .fa-paper-plane{
+    background: none;
 }
 
 #msg{
-    width: calc(100% - 45px);
+    width: calc(100% - 43px);
     height: 100%;
     border: none;
     border-bottom-left-radius: 20px;
@@ -92,8 +154,8 @@ main{
 
 #clear{
     position: absolute;
-    top: 20px;
-    left: 0px;
+    top: 90px;
+    left: 20px;
     border: 1px solid black;
     padding: 2px 5px;
     margin-left: -1px;
@@ -105,7 +167,48 @@ main{
     white-space: nowrap;
     overflow: hidden;
     transition: width 0.3s;
+    z-index: 1;
 }
 #clear:hover{
     width: 68px;
+}
+
+/* Phone top & bottom */
+#phone-top,
+#phone-bottom{
+    height: 80px;
+    background-color: #121212;
+}
+
+#phone-top{
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    position: relative;
+}
+#phone-top::before,
+#phone-top::after{
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#phone-top::before{
+    width: 30%;
+    height: 20px;
+    left: 35%;
+    border-radius: 10px;
+    background-color: black;
+}
+#phone-top::after{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    right: 20%;
+    border: 8px solid black;
+    background-color: #1a1a1a;
+}
+
+#phone-bottom{
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
