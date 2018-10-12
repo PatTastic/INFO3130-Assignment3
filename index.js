@@ -9,13 +9,23 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static('www'));
 app.use(express.json());
 
+/**
+ * Entry point for the browser
+ * @param {any} req - Request
+ * @param {any} res - Result
+ */
 app.post('/web', (req, res) => {
     let body = req.body.body;
     let from = req.body.from;
-    
+
     Game.play(req, res, body, from);
 });
 
+/**
+ * Entry point for SMS, Twilio WebHook
+ * @param {any} req - Request
+ * @param {any} res - Result
+ */
 app.post('/sms', (req, res) =>{
     let body = req.body.Body;
     let from = req.body.From;
